@@ -8,25 +8,17 @@ type Event struct {
 	message     string
 	geo         string
 	value       uint
-	data        string
+	data        map[string]interface{}
 	referenceID string
-	count       int
-	addSource   addSource
-	addTags     addTags
-	addData     addData
+	count       uint
 }
 
-type addSource func(source string)
-
-type addTags func(tags []string)
-
-type addData func(data string)
-
 //GetBaseEvent returns an empty Event struct that can be built into any type of event.
-func GetBaseEvent(eventType string, message string) Event {
+func GetBaseEvent(eventType string, message string, date string) Event {
 	return Event{
 		eventType: eventType,
 		message:   message,
+		date:      date,
 	}
 }
 
@@ -39,6 +31,36 @@ func AddSource(event Event, source string) Event {
 //AddTags adds a string array of tags for the event
 func AddTags(event Event, tags []string) Event {
 	event.tags = tags
+	return event
+}
+
+//AddGeo adds the lat and long location of the user the event impacted
+func AddGeo(event Event, geo string) Event {
+	event.geo = geo
+	return event
+}
+
+//AddValue adds an arbitrary number value to the event
+func AddValue(event Event, value uint) Event {
+	event.value = value
+	return event
+}
+
+//AddReferenceID adds an indentifier to later refer to this event
+func AddReferenceID(event Event, referenceID string) Event {
+	event.referenceID = referenceID
+	return event
+}
+
+//AddCount adds a number to help track the number of times the event has occurred
+func AddCount(event Event, count uint) Event {
+	event.count = count
+	return event
+}
+
+//AddData adds a string mapping to create a data object of additional values
+func AddData(event Event, data map[string]interface{}) Event {
+	event.data = data
 	return event
 }
 
