@@ -12,3 +12,7 @@ import (
 )
 ```
 
+Once you've imported it in your project, you'll need to configure the client. The current configuration options are as follows: 
+
+* apiKey - required
+* 
