@@ -1,68 +1,68 @@
 package main
 
 import (
+	// "encoding/json"
 	"fmt"
+	"log"
+	"os"
 	"testing"
 	"time"
+	"github.com/satori/go.uuid"
+	"github.com/go-errors/errors"
+	"github.com/joho/godotenv"
 )
 
-// err := godotenv.Load(".env")
+func TestConfigureClient(t *testing.T) {
+	err := godotenv.Load(".env")
 
-// if err != nil {
-// 	log.Fatalf("Error loading .env file")
-// }
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
 
-// // getting env variables SITE_TITLE and DB_HOST
-// testKey := os.Getenv("EXCEPTIONLESS_TEST_KEY")
-// var settings Exceptionless
-// settings.apiKey = testKey
-// var client Exceptionless = Configure(settings)
-// if client.apiKey == "" {
-// 	t.Errorf("is zero value")
-// }
-// log := `{ "type": "log", "message": "Exceptionless is amazing!", "date":"2030-01-01T12:00:00.0000000-05:00", "@user":{ "identity":"123456789", "name": "Test User" } }`
-// // SubmitLog(log)
-// SubmitLog("line36 app.js", "Undefined is not a value", "error")
+	// getting env variables SITE_TITLE and DB_HOST
+	testKey := os.Getenv("EXCEPTIONLESS_TEST_KEY")
+	var settings Exceptionless
+	settings.apiKey = testKey
+	var client Exceptionless = Configure(settings)
+	if client.apiKey == "" {
+		t.Errorf("is zero value")
+	}
+}
 
-func TestBuildSimpleLog(t *testing.T) {
+func TestBuildSimpleEvent(t *testing.T) {
 	var event Event
 	date := time.Now().Format(time.RFC3339)
 	event = GetBaseEvent("log", "boom son", date)
 	event = AddSource(event, "line 66 app.js")
-	fmt.Println(event)
+	if event.Source == "" {
+		t.Errorf("Test failed")
+	}
 }
 
-func TestBuildLogWithTags(t *testing.T) {
-	var event Event
-	date := time.Now().Format(time.RFC3339)
-	event = GetBaseEvent("log", "boom son", date)
-	event = AddSource(event, "line 66 app.js")
-	event = AddTags(event, []string{"one", "two", "three"})
-	fmt.Println(event)
-}
-
-func TestBuildLogWithGeo(t *testing.T) {
+func TestBuildEventWithTags(t *testing.T) {
 	var event Event
 	date := time.Now().Format(time.RFC3339)
 	event = GetBaseEvent("log", "boom son", date)
 	event = AddSource(event, "line 66 app.js")
 	event = AddTags(event, []string{"one", "two", "three"})
-	event = AddGeo(event, "44.14561, -172.32262")
-	fmt.Println(event)
+	if event.Tags == nil {
+		t.Errorf("Test failed")
+	}
 }
 
-func TestBuildLogWithValue(t *testing.T) {
+func TestBuildEventWithGeo(t *testing.T) {
 	var event Event
 	date := time.Now().Format(time.RFC3339)
 	event = GetBaseEvent("log", "boom son", date)
 	event = AddSource(event, "line 66 app.js")
 	event = AddTags(event, []string{"one", "two", "three"})
 	event = AddGeo(event, "44.14561, -172.32262")
-	event = AddValue(event, 21)
-	fmt.Println(event)
+	if event.Geo == "" {
+		t.Errorf("Test failed")
+	}
 }
 
-func TestBuildLogWithReferenceID(t *testing.T) {
+func TestBuildEventWithValue(t *testing.T) {
 	var event Event
 	date := time.Now().Format(time.RFC3339)
 	event = GetBaseEvent("log", "boom son", date)
@@ -70,32 +70,52 @@ func TestBuildLogWithReferenceID(t *testing.T) {
 	event = AddTags(event, []string{"one", "two", "three"})
 	event = AddGeo(event, "44.14561, -172.32262")
 	event = AddValue(event, 21)
-	event = AddReferenceID(event, "11-22-33-44")
-	fmt.Println(event)
+	if event.Value != 21 {
+		t.Errorf("Test failed")
+	}
 }
 
-func TestBuildLogWithCount(t *testing.T) {
+func TestBuildEventWithReferenceID(t *testing.T) {
 	var event Event
+	referenceID := uuid.Must(uuid.NewV4())
 	date := time.Now().Format(time.RFC3339)
 	event = GetBaseEvent("log", "boom son", date)
 	event = AddSource(event, "line 66 app.js")
 	event = AddTags(event, []string{"one", "two", "three"})
 	event = AddGeo(event, "44.14561, -172.32262")
 	event = AddValue(event, 21)
-	event = AddReferenceID(event, "11-22-33-44")
+	event = AddReferenceID(event, referenceID)
+	if event.Source == "" {
+		t.Errorf("Test failed")
+	}
+}
+
+func TestBuildEventWithCount(t *testing.T) {
+	var event Event
+	referenceID := uuid.Must(uuid.NewV4())
+	date := time.Now().Format(time.RFC3339)
+	event = GetBaseEvent("log", "boom son", date)
+	event = AddSource(event, "line 66 app.js")
+	event = AddTags(event, []string{"one", "two", "three"})
+	event = AddGeo(event, "44.14561, -172.32262")
+	event = AddValue(event, 21)
+	event = AddReferenceID(event, referenceID)
 	event = AddCount(event, 99)
-	fmt.Println(event)
+	if event.Count != 99 {
+		t.Errorf("Test failed")
+	}
 }
 
-func TestBuildLogWithData(t *testing.T) {
+func TestBuildEventWithData(t *testing.T) {
 	var event Event
+	referenceID := uuid.Must(uuid.NewV4())
 	date := time.Now().Format(time.RFC3339)
 	event = GetBaseEvent("log", "boom son", date)
 	event = AddSource(event, "line 66 app.js")
 	event = AddTags(event, []string{"one", "two", "three"})
 	event = AddGeo(event, "44.14561, -172.32262")
 	event = AddValue(event, 21)
-	event = AddReferenceID(event, "11-22-33-44")
+	event = AddReferenceID(event, referenceID)
 	event = AddCount(event, 99)
 	e := map[string]interface{}{}
 	e["message"] = "Whoops, an error"
@@ -104,5 +124,45 @@ func TestBuildLogWithData(t *testing.T) {
 	data := map[string]interface{}{}
 	data["@error"] = e
 	event = AddData(event, data)
-	fmt.Println(event)
+	if event.Data == nil {
+		t.Errorf("Test failed")
+	}
+}
+
+// func TestErrorEvent(t *testing.T) {
+// 	var event Event
+// 	referenceID := uuid.Must(uuid.NewV4())
+// 	date := time.Now().Format(time.RFC3339)
+// 	event = GetBaseEvent("error", "testing", date)
+// 	event = AddSource(event, "line 206 app.js")
+// 	event = AddTags(event, []string{"one", "two", "three"})
+// 	event = AddGeo(event, "44.14561, -172.32262")
+// 	event = AddValue(event, 21)
+// 	event = AddReferenceID(event, referenceID)
+// 	event = AddCount(event, 99)
+// 	e := map[string]interface{}{}
+// 	e["message"] = "Whoops, another"
+// 	e["type"] = "System.Exception"
+// 	e["stack_trace"] = " at Client.Tests.ExceptionlessClientTests.CanSubmitSimpleException() in ExceptionlessClientTests.cs:line 77"
+// 	data := map[string]interface{}{}
+// 	data["@error"] = e
+// 	event = AddData(event, data)
+// 	json, err := json.Marshal(event)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return
+// 	}
+// 	if string(json) == "" {
+// 		t.Errorf("Test failed")
+// 	}
+// 	resp := SubmitEvent(string(json))
+// 	fmt.Println(resp)
+// }
+
+func TestSubmitException(t *testing.T) {
+	e := errors.New(fmt.Sprintf("This is another error"))
+	resp := SubmitException(e)
+	if resp == "" {
+		t.Errorf("Test failed")
+	}
 }

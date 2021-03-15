@@ -33,9 +33,9 @@ func main() {
 func Configure(config Exceptionless) Exceptionless {
 	client = config
 
-	// if client.apiKey != "" && client.pollForConfig {
-	// 	poll()
-	// }
+	if client.apiKey != "" && client.pollForConfig {
+		poll()
+	}
 	return client
 }
 
@@ -69,13 +69,14 @@ func GetProjectConfig() string {
 	return config
 }
 
-//SubmitLog sends log events to Exceptionless
-func SubmitLog(source string, message string, level string, tags []string) {
-	// createLog(source, message, level)
-	// authorization := fmt.Sprintf("Bearer %s", client.apiKey)
-
-	// body := Post("api/v2/events", authorization, log, level, tags)
-	// fmt.Printf(body)
+//SubmitEvent sends log events to Exceptionless
+func SubmitEvent(eventBody string) string {
+	if client.apiKey == "" {
+		fmt.Println("is zero value")
+	}
+	fmt.Println(eventBody)
+	resp := Post("events", eventBody, client.apiKey)
+	return resp
 }
 
 func poll() {
@@ -85,17 +86,19 @@ func poll() {
 		url := "https://api.exceptionless.io/api/v2/projects/config"
 		method := "GET"
 
-		client := &http.Client{}
+		httpClient := &http.Client{}
 		req, err := http.NewRequest(method, url, nil)
 
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		req.Header.Add("accept", "application/json")
-		req.Header.Add("Authorization", "Bearer XUlBBdgFxAlmCsAZHDFTIacXpzYuZDuqDzzFYMlR")
 
-		res, err := client.Do(req)
+		authorization := fmt.Sprintf("Bearer %s", client.apiKey)
+		req.Header.Add("accept", "application/json")
+		req.Header.Add("Authorization", authorization)
+
+		res, err := httpClient.Do(req)
 		if err != nil {
 			fmt.Println(err)
 			return
