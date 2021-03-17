@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "encoding/json"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -23,6 +23,7 @@ func TestConfigureClient(t *testing.T) {
 	testKey := os.Getenv("EXCEPTIONLESS_TEST_KEY")
 	var settings Exceptionless
 	settings.apiKey = testKey
+	// settings.updateSettingsWhenIdleInterval = 3000 //This will enable polling for config
 	var client Exceptionless = Configure(settings)
 	if client.apiKey == "" {
 		t.Errorf("is zero value")
@@ -129,35 +130,35 @@ func TestBuildEventWithData(t *testing.T) {
 	}
 }
 
-// func TestErrorEvent(t *testing.T) {
-// 	var event Event
-// 	referenceID := uuid.Must(uuid.NewV4())
-// 	date := time.Now().Format(time.RFC3339)
-// 	event = GetBaseEvent("error", "testing", date)
-// 	event = AddSource(event, "line 206 app.js")
-// 	event = AddTags(event, []string{"one", "two", "three"})
-// 	event = AddGeo(event, "44.14561, -172.32262")
-// 	event = AddValue(event, 21)
-// 	event = AddReferenceID(event, referenceID)
-// 	event = AddCount(event, 99)
-// 	e := map[string]interface{}{}
-// 	e["message"] = "Whoops, another"
-// 	e["type"] = "System.Exception"
-// 	e["stack_trace"] = " at Client.Tests.ExceptionlessClientTests.CanSubmitSimpleException() in ExceptionlessClientTests.cs:line 77"
-// 	data := map[string]interface{}{}
-// 	data["@error"] = e
-// 	event = AddData(event, data)
-// 	json, err := json.Marshal(event)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return
-// 	}
-// 	if string(json) == "" {
-// 		t.Errorf("Test failed")
-// 	}
-// 	resp := SubmitEvent(string(json))
-// 	fmt.Println(resp)
-// }
+func TestErrorEvent(t *testing.T) {
+	var event Event
+	referenceID := uuid.Must(uuid.NewV4())
+	date := time.Now().Format(time.RFC3339)
+	event = GetBaseEvent("error", "testing", date)
+	event = AddSource(event, "line 206 app.js")
+	event = AddTags(event, []string{"one", "two", "three"})
+	event = AddGeo(event, "44.14561, -172.32262")
+	event = AddValue(event, 21)
+	event = AddReferenceID(event, referenceID)
+	event = AddCount(event, 99)
+	e := map[string]interface{}{}
+	e["message"] = "Whoops, another"
+	e["type"] = "System.Exception"
+	e["stack_trace"] = " at Client.Tests.ExceptionlessClientTests.CanSubmitSimpleException() in ExceptionlessClientTests.cs:line 77"
+	data := map[string]interface{}{}
+	data["@error"] = e
+	event = AddData(event, data)
+	json, err := json.Marshal(event)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if string(json) == "" {
+		t.Errorf("Test failed")
+	}
+	resp := SubmitEvent(string(json))
+	fmt.Println(resp)
+}
 
 func TestSubmitException(t *testing.T) {
 	e := errors.New(fmt.Sprintf("This is another error"))
