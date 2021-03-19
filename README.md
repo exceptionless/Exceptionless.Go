@@ -22,6 +22,18 @@ Once you've imported it in your project, you'll need to configure the client. Th
 
 If you are self-hosting Exceptionless, provide the server URL for your self-hosted installation for the `serverURL` property. 
 
+## Configuring Client
+
+To set up your client, in the `main.go` file of your project, import Exceptionless as described above and make use of the `ConfigureClient` function like this: 
+
+```go
+var settings Exceptionless
+settings.apiKey = testKey
+var client Exceptionless = Configure(settings)
+```
+
+This will save your client information in-memory and will make it available throughout your app. 
+
 ## Sending Events  
 
 This client has two convenience functions: `SubmitError` and `SubmitLog`. These functions take minimal arguments and are far less flexible than building events yourself, but they are the easiest to use. We'll cover them first and then we will talk about how to build a custom event.
@@ -242,4 +254,4 @@ A full example of possibile options in an an Exceptionless event is below. Keep 
   "value": "some number", 
   "tags": ["string", "string", "string"]
 }
-``
+```
