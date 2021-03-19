@@ -67,14 +67,33 @@ func AddCount(event Event, count uint) Event {
 	return event
 }
 
+func AddLogLevel(event Event, level string) Event {
+	var updatedEvent Event
+	if event.Data != nil {
+		event.Data["@level"] = level
+		updatedEvent = event
+	} else {
+		data := map[string]interface{}{}
+		data["@level"] = level
+		updatedEvent = AddData(event, data)
+	}		
+	return updatedEvent
+}
+
 //AddData adds a string mapping to create a data object of additional values
 func AddData(event Event, data map[string]interface{}) Event {
 	event.Data = data
 	return event
 }
 
-//SubmitException is a convenience wrapper to quickly build and submit an error
-func SubmitException(err error) string {
+//SubmitError is a convenience wrapper to quickly build and submit an error
+func SubmitError(err error) string {
+	exceptionlessClient := GetClient()
+	if exceptionlessClient.updateSettingsWhenIdleInterval > 0 {
+		config := GetConfig()		
+		fmt.Println(config)
+		//	We are stripping out info accoring to the config settings
+	}
 	referenceID := uuid.Must(uuid.NewV4())
 	errorMap := map[string]interface{}{}
 	errorMap["type"] = "error"
@@ -98,35 +117,28 @@ func SubmitException(err error) string {
 	return resp
 }
 
-// {
-//   "type": "error",
-//   "source": "Website", // Where the event came from in the app (something to stack on)
-//   "reference_id": "123",
-//   "message": "some event message",
-//   "geo": `${latitude},${longitude}`,
-//   "date":"2030-01-01T12:00:00.0000000-05:00",
-//   "data": {
-//     "@ref": {
-//       "id": "parent event reference id",
-//       "name": "parent event reference name"
-//     },
-//     "@user": {
-//       "identity": "email or something",
-//       "name": "John Doe",
-//       "data": "Anything we want"
-//     },
-//     "@user_description": {
-//       "email_address": "email",
-//       "description": "super cool user",
-//       "data": "Anything we want"
-//     },
-//     "@stack": { //  If provided, changes the default stacking mannerism and forces stacking based on info passed here.
-//       "signature_data": {
-//         "ManualStackingKey": "manual key we set"
-//       },
-//       "title": "stack title"
-//     },
-//   },
-//   "value": "some number",  //Int representing anything
-//   "tags": ["string", "string", "string"]
-// }
+func SubmitLog(message string, level string) string {
+	exceptionlessClient := GetClient()
+	referenceID := uuid.Must(uuid.NewV4())
+	if exceptionlessClient.updateSettingsWhenIdleInterval > 0 {
+		config := GetConfig()		
+		fmt.Println(config)
+		//	We are stripping out info accoring to the config settings
+		//	We would also prevent logs of levels below the log level set by the settings
+	}
+	var event Event
+	date := time.Now().Format(time.RFC3339)
+	event = GetBaseEvent("log", message, date)
+	event = AddReferenceID(event, referenceID)
+	data := map[string]interface{}{}
+	data["@level"] = level
+	event = AddData(event, data)
+
+	json, err := json.Marshal(event)
+	if err != nil {
+		fmt.Println(err)
+		return err.Error()
+	}
+	resp := SubmitEvent(string(json))
+	return resp
+}

@@ -36,8 +36,14 @@ func Configure(config Exceptionless) Exceptionless {
 	return client
 }
 
+//GetClient returns the Exceptionless client
 func GetClient() Exceptionless {
 	return client
+}
+
+//GetConfig returns the project configuration
+func GetConfig() map[string]interface{} {
+	return config
 }
 
 //SubmitEvent sends log events to Exceptionless
@@ -45,7 +51,6 @@ func SubmitEvent(eventBody string) string {
 	if client.apiKey == "" {
 		fmt.Println("is zero value")
 	}
-	fmt.Println(eventBody)
 	resp := Post("events", eventBody, client.apiKey)
 	return resp
 }
