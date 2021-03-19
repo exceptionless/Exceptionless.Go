@@ -218,7 +218,7 @@ A full example of possibile options in an an Exceptionless event is below. Keep 
 ```json
 {
   "type": "error",
-  "source": "Website", // Where the event came from in the app (something to stack on)
+  "source": "Website", 
   "reference_id": "123",
   "message": "some event message",
   "geo": "latitude}, longitude",
@@ -238,14 +238,14 @@ A full example of possibile options in an an Exceptionless event is below. Keep 
       "description": "super cool user",
       "data": "Anything we want"
     },
-    "@stack": { //  If provided, changes the default stacking mannerism and forces stacking based on info passed here.
+    "@stack": { 
       "signature_data": {
         "ManualStackingKey": "manual key we set"
       },
       "title": "stack title"
     },
   },
-  "value": "some number",  //Int representing anything
+  "value": "some number", 
   "tags": ["string", "string", "string"]
 }
 ``
