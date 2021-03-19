@@ -63,6 +63,19 @@ func TestBuildEventWithGeo(t *testing.T) {
 	}
 }
 
+func TestBuildEventWithLogLevel(t *testing.T) {
+	var event Event
+	date := time.Now().Format(time.RFC3339)
+	event = GetBaseEvent("log", "boom son", date)
+	event = AddSource(event, "line 66 app.js")
+	event = AddTags(event, []string{"one", "two", "three"})
+	event = AddGeo(event, "44.14561, -172.32262")
+	event = AddLogLevel(event, "info")
+	if event.Geo == "" {
+		t.Errorf("Test failed")
+	}
+}
+
 func TestBuildEventWithValue(t *testing.T) {
 	var event Event
 	date := time.Now().Format(time.RFC3339)
@@ -151,18 +164,38 @@ func TestErrorEvent(t *testing.T) {
 	json, err := json.Marshal(event)
 	if err != nil {
 		fmt.Println(err)
-		return
+		t.Errorf("Test failed")
 	}
 	if string(json) == "" {
 		t.Errorf("Test failed")
 	}
 	resp := SubmitEvent(string(json))
-	fmt.Println(resp)
+	if resp == "" {
+		t.Errorf("Test failed")
+	}
 }
 
-func TestSubmitException(t *testing.T) {
+func TestSubmitError(t *testing.T) {
 	e := errors.New(fmt.Sprintf("This is another error"))
-	resp := SubmitException(e)
+	resp := SubmitError(e)
+	if resp == "" {
+		t.Errorf("Test failed")
+	}
+}
+
+func TestSubmitInfoLog(t *testing.T) {
+	message := "Info log!"
+	level := "info"
+	resp := SubmitLog(message, level)
+	if resp == "" {
+		t.Errorf("Test failed")
+	}
+}
+
+func TestSubmitWarnLog(t *testing.T) {
+	message := "Warn log!"
+	level := "warn"
+	resp := SubmitLog(message, level)
 	if resp == "" {
 		t.Errorf("Test failed")
 	}
