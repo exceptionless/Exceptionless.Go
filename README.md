@@ -17,16 +17,10 @@ Once you've imported it in your project, you'll need to configure the client. Th
 
 * apiKey - string - required
 * serverURL - string - optional
-* updateSettingsWhenIdleInterval - int32 - optional
-* includePrivateInformation - bool - optional
 
 `apiKey` is self-explanatory. Get your key at https://exceptionless.com.
 
 If you are self-hosting Exceptionless, provide the server URL for your self-hosted installation for the `serverURL` property. 
-
-If you would like to update configuration settings within the Exceptionless frontend and allow the Go Client to adjust itself based on those settings, you can set a polling interval for `updateSettingsWhenIdleInterval`. If this is configured, the client will automatically poll for your project configuration settings. 
-
-If you pass in a `false` for `includePrivateInformation`, the Go Client will try to strip out information like passwords, api keys, bearer tokens, etc. 
 
 ## Sending Events  
 
