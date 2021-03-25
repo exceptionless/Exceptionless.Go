@@ -4,7 +4,7 @@ This is a simple client wrapper to make working with Exceptionless in the Go env
 
 ## Getting Started 
 
-To install the client, run `go get https://github.com/Exceptionless/go-client`.
+To install the client, run `go get https://github.com/Exceptionless/Exceptionless.Go`.
  Import it into your project like this: 
 
 ```go
