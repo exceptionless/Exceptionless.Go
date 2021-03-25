@@ -9,7 +9,7 @@ To install the client, run `go get https://github.com/Exceptionless/go-client`.
 
 ```go
 import (
-	"github.com/Exceptionless/go-client"
+	"github.com/Exceptionless/Exceptionless.Go"
 )
 ```
 

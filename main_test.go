@@ -1,4 +1,4 @@
-package main
+package exceptionless
 
 import (
 	"encoding/json"

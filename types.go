@@ -1,4 +1,4 @@
-package main
+package exceptionless
 
 import (
 	"github.com/satori/go.uuid"
