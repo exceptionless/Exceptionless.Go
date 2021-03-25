@@ -1,6 +1,6 @@
 # Exceptionless Go Client
 
-This is a simple client wrapper to make working with Exceptionless in the Go environment easier. The client, is not a complete wrapper around the Exceptionless API, so you are encouraged to review the [full Swagger documentation here](https://api.exceptionless.io/docs/index.html). 
+This is a simple client wrapper to make working with Exceptionless in the Go environment easier. The client is not a complete wrapper around the Exceptionless API, so you are encouraged to review the [full Swagger documentation here](https://api.exceptionless.io/docs/index.html). 
 
 ## Getting Started 
 
