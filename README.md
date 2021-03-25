@@ -24,28 +24,28 @@ If you are self-hosting Exceptionless, provide the server URL for your self-host
 
 ## Configuring Client
 
-To set up your client, in the `main.go` file of your project, import Exceptionless as described above and make use of the `ConfigureClient` function like this: 
+To set up your client, in the `main.go` file of your project, import Exceptionless as described above and make use of the `Configure` function like this: 
 
 ```go
 var settings Exceptionless
 settings.apiKey = testKey
-var client Exceptionless = Configure(settings)
+Configure(settings)
 ```
 
-This will save your client information in-memory and will make it available throughout your app. 
+This will save your client information in-memory and will make it available throughout your app through a globally exposed variable called `ExceptionlessClient`. 
 
 ## Sending Events  
 
-This client has two convenience functions: `SubmitError` and `SubmitLog`. These functions take minimal arguments and are far less flexible than building events yourself, but they are the easiest to use. We'll cover them first and then we will talk about how to build a custom event.
+This client has two convenience functions: `submitError` and `submitLog`. These functions take minimal arguments and are far less flexible than building events yourself, but they are the easiest to use. We'll cover them first and then we will talk about how to build a custom event.
 
 ### SubmitError
 
-The `SubmitError` function does exactly what it says. It will build a simple error event and submit it to Exceptionless. `SubmitError` takes a Go error type and returns a string value response. An example of how to call this function is in the `main_test.go` file as well as below: 
+The `submitError` function does exactly what it says. It will build a simple error event and submit it to Exceptionless. `submitError` takes a Go error type and returns a string value response. An example of how to call this function is in the `main_test.go` file as well as below: 
 
 ```go
 func MyGoFunction() {
 	e := errors.New(fmt.Sprintf("This is an error"))
-	resp := SubmitError(e)
+	resp := ExceptionlessClient.submitError(e)
 	fmt.Println(resp)
 }
 ```
@@ -58,7 +58,7 @@ This function is a simple wrapper that allows you to submit log events with spec
 func MyGoFunction() {
 	message := "Info log!"
 	level := "info"
-	resp := SubmitLog(message, level)
+	resp := ExceptionlessClient.submitLog(message, level)
 	fmt.Println(resp)
 }
 ```
@@ -72,10 +72,10 @@ The first thing you will always need to do when building a custom event is get t
 ```go
 var event Event
 date := time.Now().Format(time.RFC3339)
-event = GetBaseEvent("log", "boom son", date)
+event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
 ```
 
-The `GetBaseEvent` function requires three parameters: eventType (string), message (string), and date (date).
+The `getBaseEvent` function requires three parameters: eventType (string), message (string), and date (date).
 
 ### AddSource
 
@@ -84,11 +84,11 @@ This function will add a source location for the event. Think of this as an area
 ```go
 var event Event
 date := time.Now().Format(time.RFC3339)
-event = GetBaseEvent("log", "boom son", date)
-event = AddSource(event, "line 66 main.go")
+event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
+event = ExceptionlessClient.addSource(event, "line 66 main.go")
 ```
 
-`AddSource` takes in your exist event as well as a string variable for the source of the event.
+`addSource` takes in your exist event as well as a string variable for the source of the event.
 
 ### AddTags
 
@@ -97,11 +97,11 @@ This function will add a string array of tags to your event. These tags can be u
 ```go
 var event Event
 date := time.Now().Format(time.RFC3339)
-event = GetBaseEvent("log", "boom son", date)
-event = AddTags(event, []string{"one", "two", "three"})
+event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
+event = ExceptionlessClient.addTags(event, []string{"one", "two", "three"})
 ```
 
-As you can see, the `AddTags` function takes the existing event and a string array as arguments. 
+As you can see, the `addTags` function takes the existing event and a string array as arguments. 
 
 ### AddGeo
 
@@ -110,8 +110,8 @@ This function will add the geographical location of your user with a latitude an
 ```go
 var event Event
 date := time.Now().Format(time.RFC3339)
-event = GetBaseEvent("log", "boom son", date)
-event = AddGeo(event, "44.14561, -172.32262")
+event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
+event = ExceptionlessClient.addGeo(event, "44.14561, -172.32262")
 ```
 
 The `AddGeo` function takes in your existing event and a string value with comma delimited lat and long values as arguments. 
@@ -123,11 +123,11 @@ This function will add an arbitrary integer value to your events. It can represe
 ```go
 var event Event
 date := time.Now().Format(time.RFC3339)
-event = GetBaseEvent("log", "boom son", date)
-event = AddValue(event, 21)
+event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
+event = ExceptionlessClient.addValue(event, 21)
 ```
 
-As you can see, the `AddValue` function takes in your existing event and an integer value as arguments. 
+As you can see, the `addValue` function takes in your existing event and an integer value as arguments. 
 
 ### AddReferenceID 
 
@@ -141,11 +141,11 @@ Here is an example of how to use this function:
 var event Event
 referenceID := uuid.Must(uuid.NewV4())
 date := time.Now().Format(time.RFC3339)
-event = GetBaseEvent("log", "boom son", date)
-event = AddReferenceID(event, referenceID)
+event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
+event = ExceptionlessClient.addReferenceID(event, referenceID)
 ```
 
-As you can see, the `AddReferenceId` function takes in your existing event and a referenceID (in the form of the UUID type) as arguments. 
+As you can see, the `addReferenceId` function takes in your existing event and a referenceID (in the form of the UUID type) as arguments. 
 
 ### AddCount
 
@@ -154,10 +154,10 @@ This function adds a count integer to help you easily count just about anything 
 ```go
 var event Event
 date := time.Now().Format(time.RFC3339)
-event = GetBaseEvent("log", "boom son", date)
-event = AddCount(event, 99)
+event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
+event = ExceptionlessClient.addCount(event, 99)
 ```
-As you can see, the `AddCount` function takes in your existing event and an integer as arguments. 
+As you can see, the `addCount` function takes in your existing event and an integer as arguments. 
 
 ### AddLogLevel
 
@@ -166,11 +166,11 @@ This function is designed for log type events. It will add a log level to your e
 ```go
 var event Event
 date := time.Now().Format(time.RFC3339)
-event = GetBaseEvent("log", "boom son", date)
-event = AddLogLevel(event, "info")
+event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
+event = ExceptionlessClient.addLogLevel(event, "info")
 ```
 
-As you can see, the `AddLogLevel` function takes in your existing event and a string value representing the log level as arguments. 
+As you can see, the `addLogLevel` function takes in your existing event and a string value representing the log level as arguments. 
 
 ### SubmitEvent
 
@@ -182,7 +182,7 @@ if err != nil {
 	fmt.Println(err)
 }
 
-resp := SubmitEvent(string(json))
+resp := ExceptionlessClient.submitEvent(string(json))
 ```
 
 ## Full Example
@@ -193,25 +193,25 @@ Here is a more complete example of building and submitting a custom event:
 var event Event
 referenceID := uuid.Must(uuid.NewV4())
 date := time.Now().Format(time.RFC3339)
-event = GetBaseEvent("error", "testing", date)
-event = AddSource(event, "line 206 app.js")
-event = AddTags(event, []string{"one", "two", "three"})
-event = AddGeo(event, "44.14561, -172.32262")
-event = AddValue(event, 21)
-event = AddReferenceID(event, referenceID)
-event = AddCount(event, 99)
+event = ExceptionlessClient.getBaseEvent("error", "testing", date)
+event = ExceptionlessClient.addSource(event, "line 206 app.js")
+event = ExceptionlessClient.addTags(event, []string{"one", "two", "three"})
+event = ExceptionlessClient.addGeo(event, "44.14561, -172.32262")
+event = ExceptionlessClient.addValue(event, 21)
+event = ExceptionlessClient.addReferenceID(event, referenceID)
+event = ExceptionlessClient.addCount(event, 99)
 e := map[string]interface{}{}
 e["message"] = "Whoops, another"
 e["type"] = "System.Exception"
 e["stack_trace"] = " at Client.Tests.ExceptionlessClientTests.CanSubmitSimpleException() in ExceptionlessClientTests.cs:line 77"
 data := map[string]interface{}{}
 data["@error"] = e
-event = AddData(event, data)
+event = ExceptionlessClient.addData(event, data)
 json, err := json.Marshal(event)
 if err != nil {
 	fmt.Println(err)
 }
-resp := SubmitEvent(string(json))
+resp := ExceptionlessClient.submitEvent(string(json))
 if resp == "" {
 	fmt.Println("Test failed")
 }
