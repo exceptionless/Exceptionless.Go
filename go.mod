@@ -1,4 +1,4 @@
-module exceptionless
+module github.com/Exceptionless/Exceptionless.Go
 
 go 1.15
 
