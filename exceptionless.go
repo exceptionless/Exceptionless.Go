@@ -34,10 +34,6 @@ type Exceptionless struct {
 //ExceptionlessClient returns the configured client
 var ExceptionlessClient = Exceptionless{}
 
-func main() {
-	handlePolling()
-}
-
 func handlePolling() {
 	if ExceptionlessClient.apiKey != "" && ExceptionlessClient.updateSettingsWhenIdleInterval > 0 {
 		fmt.Println("polling!")
