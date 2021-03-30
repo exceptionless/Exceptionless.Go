@@ -10,10 +10,10 @@ var config map[string]interface{} = nil
 
 //Exceptionless type defines the client configuration structure
 type Exceptionless struct {
-	apiKey                         string
-	serverURL                      string
-	updateSettingsWhenIdleInterval int32
-	includePrivateInformation      bool
+	ApiKey                         string
+	ServerURL                      string
+	UpdateSettingsWhenIdleInterval int32
+	IncludePrivateInformation      bool
 }
 
 //ExceptionlessClient returns the configured client

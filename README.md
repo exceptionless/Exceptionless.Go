@@ -37,7 +37,7 @@ exceptionless.ExceptionlessClient.apiKey = "YOUR API KEY"
 Or you can build up your own copy of the configuration struct and pass in your config settings all at once like this: 
 
 ```go
-var settings = ExceptionlessClient
+var settings = exceptionless.ExceptionlessClient
 settings{
   apiKey: "YOUR API KEY"
   serverURL: "SELF HOSTED SERVER URL"
