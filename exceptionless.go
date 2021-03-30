@@ -20,7 +20,7 @@ type Exceptionless struct {
 var ExceptionlessClient = Exceptionless{}
 
 func handlePolling() {
-	if ExceptionlessClient.apiKey != "" && ExceptionlessClient.updateSettingsWhenIdleInterval > 0 {
+	if ExceptionlessClient.ApiKey != "" && ExceptionlessClient.UpdateSettingsWhenIdleInterval > 0 {
 		fmt.Println("polling!")
 		poll()
 	}
@@ -47,9 +47,9 @@ func poll() {
 	r := rand.New(rand.NewSource(99))
 	c := time.Tick(10 * time.Second)
 	for _ = range c {
-		resp := Get("projects/config", ExceptionlessClient.apiKey)
+		resp := Get("projects/config", ExceptionlessClient.ApiKey)
 		config = resp
-		jitter := time.Duration(r.Int31n(ExceptionlessClient.updateSettingsWhenIdleInterval)) * time.Millisecond
+		jitter := time.Duration(r.Int31n(ExceptionlessClient.UpdateSettingsWhenIdleInterval)) * time.Millisecond
 		time.Sleep(jitter)
 	}
 }

@@ -21,8 +21,8 @@ func Post(endpoint string, postBody string, authorization string) string {
 	}
 
 	var baseURL string = os.Getenv("BASE_API_URL")
-	if exceptionless.serverURL != "" {
-		baseURL = exceptionless.serverURL
+	if exceptionless.ServerURL != "" {
+		baseURL = exceptionless.ServerURL
 	} 
 
 	url := baseURL + endpoint
@@ -50,8 +50,8 @@ func Get(endpoint string, authorization string) map[string]interface{} {
 	}
 
 	var baseURL string = os.Getenv("BASE_API_URL")
-	if exceptionless.serverURL != "" {
-		baseURL = exceptionless.serverURL
+	if exceptionless.ServerURL != "" {
+		baseURL = exceptionless.ServerURL
 	} 
 
 	url := baseURL + endpoint

@@ -88,7 +88,7 @@ func AddData(event Event, data map[string]interface{}) Event {
 
 //SubmitError is a convenience wrapper to quickly build and submit an error
 func SubmitError(err error) string {
-	if ExceptionlessClient.updateSettingsWhenIdleInterval > 0 {
+	if ExceptionlessClient.UpdateSettingsWhenIdleInterval > 0 {
 		config := GetConfig()		
 		fmt.Println(config)
 		//	We are stripping out info accoring to the config settings
@@ -119,7 +119,7 @@ func SubmitError(err error) string {
 func SubmitLog(message string, level string) string {
 	exceptionlessClient := GetClient()
 	referenceID := uuid.Must(uuid.NewV4())
-	if exceptionlessClient.updateSettingsWhenIdleInterval > 0 {
+	if exceptionlessClient.UpdateSettingsWhenIdleInterval > 0 {
 		config := GetConfig()		
 		fmt.Println(config)
 		//	We are stripping out info accoring to the config settings
@@ -143,9 +143,9 @@ func SubmitLog(message string, level string) string {
 }
 
 func SubmitEvent(eventBody string) string {
-	if ExceptionlessClient.apiKey == "" {
+	if ExceptionlessClient.ApiKey == "" {
 		fmt.Println("is zero value")
 	}
-	resp := Post("events", eventBody, ExceptionlessClient.apiKey)
+	resp := Post("events", eventBody, ExceptionlessClient.ApiKey)
 	return resp
 }
