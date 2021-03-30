@@ -17,12 +17,12 @@ import (
 
 Once you've imported it in your project, you'll need to configure the client. The current configuration options are as follows: 
 
-* apiKey - string - required
-* serverURL - string - optional
+* ApiKey - string - required
+* ServerURL - string - optional
 
-`apiKey` is self-explanatory. Get your key at https://exceptionless.com.
+`ApiKey` is self-explanatory. Get your key at https://exceptionless.com.
 
-If you are self-hosting Exceptionless, provide the server URL for your self-hosted installation for the `serverURL` property. 
+If you are self-hosting Exceptionless, provide the server URL for your self-hosted installation for the `ServerURL` property. 
 
 ## Configuring Client
 
@@ -31,19 +31,17 @@ To set up your client, in the `main.go` file of your project, import Exceptionle
 There are two main ways to configure the Exceptionless client. You can set properties in the configuration struct one-by-one like this: 
 
 ```go
-exceptionless.ExceptionlessClient.apiKey = "YOUR API KEY"
+exceptionless.ExceptionlessClient.ApiKey = "YOUR API KEY"
 ```
 
 Or you can build up your own copy of the configuration struct and pass in your config settings all at once like this: 
 
 ```go
-var settings = exceptionless.ExceptionlessClient
-settings{
-  apiKey: "YOUR API KEY"
-  serverURL: "SELF HOSTED SERVER URL"
+config := exceptionless.Exceptionless{
+	ApiKey: "YOUR API KEY", 
+	ServerURL: "OPTIONAL SELF HOSTED URL",
 }
-
-exceptionless.Configure(settings)
+exceptionless.Configure(config)
 ```
 
 This will save your client information in-memory and will make it available throughout your app through a globally exposed variable called `ExceptionlessClient`. You can access that variable like this: `exceptionless.ExceptionlessClient`.
