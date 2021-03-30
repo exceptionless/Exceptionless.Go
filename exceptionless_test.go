@@ -24,8 +24,8 @@ func TestConfigureClient(t *testing.T) {
 	var settings Exceptionless
 	settings.apiKey = testKey
 	// settings.updateSettingsWhenIdleInterval = 3000 //This will enable polling for config
-	Configure(settings)
-	if ExceptionlessClient.apiKey == "" {
+	var client Exceptionless = Configure(settings)
+	if client.apiKey == "" {
 		t.Errorf("is zero value")
 	}
 }
@@ -33,8 +33,8 @@ func TestConfigureClient(t *testing.T) {
 func TestBuildSimpleEvent(t *testing.T) {
 	var event Event
 	date := time.Now().Format(time.RFC3339)
-	event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
-	event = ExceptionlessClient.addSource(event, "line 66 app.js")
+	event = GetBaseEvent("log", "boom son", date)
+	event = AddSource(event, "line 66 app.js")
 	if event.Source == "" {
 		t.Errorf("Test failed")
 	}
@@ -43,9 +43,9 @@ func TestBuildSimpleEvent(t *testing.T) {
 func TestBuildEventWithTags(t *testing.T) {
 	var event Event
 	date := time.Now().Format(time.RFC3339)
-	event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
-	event = ExceptionlessClient.addSource(event, "line 66 app.js")
-	event = ExceptionlessClient.addTags(event, []string{"one", "two", "three"})
+	event = GetBaseEvent("log", "boom son", date)
+	event = AddSource(event, "line 66 app.js")
+	event = AddTags(event, []string{"one", "two", "three"})
 	if event.Tags == nil {
 		t.Errorf("Test failed")
 	}
@@ -54,10 +54,10 @@ func TestBuildEventWithTags(t *testing.T) {
 func TestBuildEventWithGeo(t *testing.T) {
 	var event Event
 	date := time.Now().Format(time.RFC3339)
-	event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
-	event = ExceptionlessClient.addSource(event, "line 66 app.js")
-	event = ExceptionlessClient.addTags(event, []string{"one", "two", "three"})
-	event = ExceptionlessClient.addGeo(event, "44.14561, -172.32262")
+	event = GetBaseEvent("log", "boom son", date)
+	event = AddSource(event, "line 66 app.js")
+	event = AddTags(event, []string{"one", "two", "three"})
+	event = AddGeo(event, "44.14561, -172.32262")
 	if event.Geo == "" {
 		t.Errorf("Test failed")
 	}
@@ -66,11 +66,11 @@ func TestBuildEventWithGeo(t *testing.T) {
 func TestBuildEventWithLogLevel(t *testing.T) {
 	var event Event
 	date := time.Now().Format(time.RFC3339)
-	event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
-	event = ExceptionlessClient.addSource(event, "line 66 app.js")
-	event = ExceptionlessClient.addTags(event, []string{"one", "two", "three"})
-	event = ExceptionlessClient.addGeo(event, "44.14561, -172.32262")
-	event = ExceptionlessClient.addLogLevel(event, "info")
+	event = GetBaseEvent("log", "boom son", date)
+	event = AddSource(event, "line 66 app.js")
+	event = AddTags(event, []string{"one", "two", "three"})
+	event = AddGeo(event, "44.14561, -172.32262")
+	event = AddLogLevel(event, "info")
 	if event.Geo == "" {
 		t.Errorf("Test failed")
 	}
@@ -79,11 +79,11 @@ func TestBuildEventWithLogLevel(t *testing.T) {
 func TestBuildEventWithValue(t *testing.T) {
 	var event Event
 	date := time.Now().Format(time.RFC3339)
-	event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
-	event = ExceptionlessClient.addSource(event, "line 66 app.js")
-	event = ExceptionlessClient.addTags(event, []string{"one", "two", "three"})
-	event = ExceptionlessClient.addGeo(event, "44.14561, -172.32262")
-	event = ExceptionlessClient.addValue(event, 21)
+	event = GetBaseEvent("log", "boom son", date)
+	event = AddSource(event, "line 66 app.js")
+	event = AddTags(event, []string{"one", "two", "three"})
+	event = AddGeo(event, "44.14561, -172.32262")
+	event = AddValue(event, 21)
 	if event.Value != 21 {
 		t.Errorf("Test failed")
 	}
@@ -93,12 +93,12 @@ func TestBuildEventWithReferenceID(t *testing.T) {
 	var event Event
 	referenceID := uuid.Must(uuid.NewV4())
 	date := time.Now().Format(time.RFC3339)
-	event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
-	event = ExceptionlessClient.addSource(event, "line 66 app.js")
-	event = ExceptionlessClient.addTags(event, []string{"one", "two", "three"})
-	event = ExceptionlessClient.addGeo(event, "44.14561, -172.32262")
-	event = ExceptionlessClient.addValue(event, 21)
-	event = ExceptionlessClient.addReferenceID(event, referenceID)
+	event = GetBaseEvent("log", "boom son", date)
+	event = AddSource(event, "line 66 app.js")
+	event = AddTags(event, []string{"one", "two", "three"})
+	event = AddGeo(event, "44.14561, -172.32262")
+	event = AddValue(event, 21)
+	event = AddReferenceID(event, referenceID)
 	if event.Source == "" {
 		t.Errorf("Test failed")
 	}
@@ -108,13 +108,13 @@ func TestBuildEventWithCount(t *testing.T) {
 	var event Event
 	referenceID := uuid.Must(uuid.NewV4())
 	date := time.Now().Format(time.RFC3339)
-	event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
-	event = ExceptionlessClient.addSource(event, "line 66 app.js")
-	event = ExceptionlessClient.addTags(event, []string{"one", "two", "three"})
-	event = ExceptionlessClient.addGeo(event, "44.14561, -172.32262")
-	event = ExceptionlessClient.addValue(event, 21)
-	event = ExceptionlessClient.addReferenceID(event, referenceID)
-	event = ExceptionlessClient.addCount(event, 99)
+	event = GetBaseEvent("log", "boom son", date)
+	event = AddSource(event, "line 66 app.js")
+	event = AddTags(event, []string{"one", "two", "three"})
+	event = AddGeo(event, "44.14561, -172.32262")
+	event = AddValue(event, 21)
+	event = AddReferenceID(event, referenceID)
+	event = AddCount(event, 99)
 	if event.Count != 99 {
 		t.Errorf("Test failed")
 	}
@@ -124,20 +124,20 @@ func TestBuildEventWithData(t *testing.T) {
 	var event Event
 	referenceID := uuid.Must(uuid.NewV4())
 	date := time.Now().Format(time.RFC3339)
-	event = ExceptionlessClient.getBaseEvent("log", "boom son", date)
-	event = ExceptionlessClient.addSource(event, "line 66 app.js")
-	event = ExceptionlessClient.addTags(event, []string{"one", "two", "three"})
-	event = ExceptionlessClient.addGeo(event, "44.14561, -172.32262")
-	event = ExceptionlessClient.addValue(event, 21)
-	event = ExceptionlessClient.addReferenceID(event, referenceID)
-	event = ExceptionlessClient.addCount(event, 99)
+	event = GetBaseEvent("log", "boom son", date)
+	event = AddSource(event, "line 66 app.js")
+	event = AddTags(event, []string{"one", "two", "three"})
+	event = AddGeo(event, "44.14561, -172.32262")
+	event = AddValue(event, 21)
+	event = AddReferenceID(event, referenceID)
+	event = AddCount(event, 99)
 	e := map[string]interface{}{}
 	e["message"] = "Whoops, an error"
 	e["type"] = "System.Exception"
 	e["stack_trace"] = " at Client.Tests.ExceptionlessClientTests.CanSubmitSimpleException() in ExceptionlessClientTests.cs:line 77"
 	data := map[string]interface{}{}
 	data["@error"] = e
-	event = ExceptionlessClient.addData(event, data)
+	event = AddData(event, data)
 	if event.Data == nil {
 		t.Errorf("Test failed")
 	}
@@ -147,20 +147,20 @@ func TestErrorEvent(t *testing.T) {
 	var event Event
 	referenceID := uuid.Must(uuid.NewV4())
 	date := time.Now().Format(time.RFC3339)
-	event = ExceptionlessClient.getBaseEvent("error", "testing", date)
-	event = ExceptionlessClient.addSource(event, "line 206 app.js")
-	event = ExceptionlessClient.addTags(event, []string{"one", "two", "three"})
-	event = ExceptionlessClient.addGeo(event, "44.14561, -172.32262")
-	event = ExceptionlessClient.addValue(event, 21)
-	event = ExceptionlessClient.addReferenceID(event, referenceID)
-	event = ExceptionlessClient.addCount(event, 99)
+	event = GetBaseEvent("error", "testing", date)
+	event = AddSource(event, "line 206 app.js")
+	event = AddTags(event, []string{"one", "two", "three"})
+	event = AddGeo(event, "44.14561, -172.32262")
+	event = AddValue(event, 21)
+	event = AddReferenceID(event, referenceID)
+	event = AddCount(event, 99)
 	e := map[string]interface{}{}
 	e["message"] = "Whoops, another"
 	e["type"] = "System.Exception"
 	e["stack_trace"] = " at Client.Tests.ExceptionlessClientTests.CanSubmitSimpleException() in ExceptionlessClientTests.cs:line 77"
 	data := map[string]interface{}{}
 	data["@error"] = e
-	event = ExceptionlessClient.addData(event, data)
+	event = AddData(event, data)
 	json, err := json.Marshal(event)
 	if err != nil {
 		fmt.Println(err)
@@ -169,7 +169,7 @@ func TestErrorEvent(t *testing.T) {
 	if string(json) == "" {
 		t.Errorf("Test failed")
 	}
-	resp := ExceptionlessClient.submitEvent(string(json))
+	resp := SubmitEvent(string(json))
 	if resp == "" {
 		t.Errorf("Test failed")
 	}
@@ -177,7 +177,7 @@ func TestErrorEvent(t *testing.T) {
 
 func TestSubmitError(t *testing.T) {
 	e := errors.New(fmt.Sprintf("This is another error"))
-	resp := ExceptionlessClient.submitError(e)
+	resp := SubmitError(e)
 	if resp == "" {
 		t.Errorf("Test failed")
 	}
@@ -186,7 +186,7 @@ func TestSubmitError(t *testing.T) {
 func TestSubmitInfoLog(t *testing.T) {
 	message := "Info log!"
 	level := "info"
-	resp := ExceptionlessClient.submitLog(message, level)
+	resp := SubmitLog(message, level)
 	if resp == "" {
 		t.Errorf("Test failed")
 	}
@@ -195,7 +195,7 @@ func TestSubmitInfoLog(t *testing.T) {
 func TestSubmitWarnLog(t *testing.T) {
 	message := "Warn log!"
 	level := "warn"
-	resp := ExceptionlessClient.submitLog(message, level)
+	resp := SubmitLog(message, level)
 	if resp == "" {
 		t.Errorf("Test failed")
 	}
