@@ -2,25 +2,17 @@ package exceptionless
 
 import (
 	"bytes"
-	"log"
 	"net/http"
-	"os"
 	"fmt"
 	"io/ioutil"
-	"github.com/joho/godotenv"
 	"encoding/json"
 )
 
 //Post posts to the Exceptionless Server
 func Post(endpoint string, postBody string, authorization string) string {	
 	exceptionless := GetClient()
-	err := godotenv.Load(".env")
 
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
-	var baseURL string = os.Getenv("BASE_API_URL")
+	var baseURL string = GetBaseURL()
 	if exceptionless.ServerURL != "" {
 		baseURL = exceptionless.ServerURL
 	} 
@@ -43,13 +35,7 @@ func Post(endpoint string, postBody string, authorization string) string {
 //GET makes api GET requests
 func Get(endpoint string, authorization string) map[string]interface{} {
 	exceptionless := GetClient()
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
-	var baseURL string = os.Getenv("BASE_API_URL")
+	var baseURL string = GetBaseURL()
 	if exceptionless.ServerURL != "" {
 		baseURL = exceptionless.ServerURL
 	} 

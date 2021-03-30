@@ -22,6 +22,10 @@ type Event struct {
 	Count       uint                   `json:"count,omitempty"`
 }
 
+func GetBaseURL() string {
+	return "https://collector.exceptionless.com/api/v2/"
+}
+
 //GetBaseEvent returns an empty Event struct that can be built into any type of event.
 func GetBaseEvent(eventType string, message string, date string) Event {
 	return Event{
